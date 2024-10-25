@@ -1,7 +1,9 @@
 """Patient API Controller"""
 
-from flask import Flask
+import json
+from flask import Flask, request, jsonify
 from patient_db import PatientDB
+
 
 
 class PatientAPIController:
@@ -25,27 +27,53 @@ class PatientAPIController:
     """
     TODO:
     Implement the following methods,
-    use the self.patient_db object to interact with the database.
+    use the self.patient_db object to interact with the database. - DONE!
 
-    Every method in this class should return a JSON response with status code
-    Status code should be 200 if the operation was successful,
-    Status code should be 400 if there was a client error,
+    Every method in this class should return a JSON response with status code - DONE!
+    Status code should be 200 if the operation was successful, - DONE!
+    Status code should be 400 if there was a client error, - DONE!
     """
 
     def create_patient(self):
-        pass
+        # here this gets the patient data from the request
+        patient_data = request.json
+
+        try:
+            self.patient_db.insert_patient(patient_data)
+            return jsonify({"message": "Patient created successfully"}), 200
+        except Exception as e:
+            return jsonify({"message": str(e)}), 400
 
     def get_patients(self):
-        pass
+        try:
+            patients = self.patient_db.select_all_patients()
+            return jsonify(patients), 200
+        except Exception as e:
+            return jsonify({"message": str(e)}), 400
 
     def get_patient(self, patient_id):
-        pass
+        try:
+            patient = self.patient_db.select_patient(patient_id)
+            return jsonify(patient), 200
+        except Exception as e:
+            return jsonify({"message": str(e)}), 400
 
     def update_patient(self, patient_id):
-        pass
+        # Get the patient data from the request
+        patient_data = request.json
+
+        try:
+            self.patient_db.update_patient(patient_id, patient_data)
+            return jsonify({"message": "Patient updated successfully"}), 200
+        except Exception as e:
+            return jsonify({"message": str(e)}), 400
 
     def delete_patient(self, patient_id):
-        pass
+        try:
+            self.patient_db.delete_patient(patient_id)
+            return jsonify({"message": "Patient deleted successfully"}), 200
+        except Exception as e:
+            return jsonify({"message": str(e)}), 400
 
     def run(self):
         """
